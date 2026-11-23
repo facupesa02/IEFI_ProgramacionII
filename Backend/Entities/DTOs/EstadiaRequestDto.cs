@@ -1,4 +1,4 @@
-namespace IEFI.Business.Dto;
+namespace IEFI.Entities.DTOs;
 
 public class EstadiaRequestDto
 {

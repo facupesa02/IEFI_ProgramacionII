@@ -1,5 +1,5 @@
 using System.Data.Common;
-using IEFI.Business.Dto;
+using IEFI.Entities.DTOs;
 using IEFI.Business.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

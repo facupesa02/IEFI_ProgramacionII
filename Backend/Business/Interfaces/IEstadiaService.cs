@@ -1,4 +1,4 @@
-using IEFI.Business.Dto;
+using IEFI.Entities.DTOs;
 using IEFI.Entities.Models;
 
 namespace IEFI.Business.Interfaces;
