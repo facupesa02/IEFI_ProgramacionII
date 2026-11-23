@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using IEFI.Entities.Models;
 
 namespace IEFI.Data.Context;
 
@@ -9,13 +10,13 @@ public class ApplicationDbContext : DbContext
     {
     }
 
-    // Agregar aqui los DbSet de las entidades:
-    // public DbSet<Entidad> Entidades => Set<Entidad>();
+    public DbSet<Mascota> Mascotas => Set<Mascota>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        // Las configuraciones de Entity Framework se deben agregar aqui.
+        modelBuilder.Entity<Mascota>()
+            .Property(m => m.Peso)
+            .HasPrecision(10, 2);
     }
 }
