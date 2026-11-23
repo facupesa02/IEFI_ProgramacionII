@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/Backend/" />
+  <Folder Name="/Backend/Api/">
+    <Project Path="Backend/Api/IEFI.Api.csproj" />
+  </Folder>
+  <Folder Name="/Backend/Business/">
+    <Project Path="Backend/Business/IEFI.Business.csproj" />
+  </Folder>
+  <Folder Name="/Backend/Data/">
+    <Project Path="Backend/Data/IEFI.Data.csproj" />
+  </Folder>
+  <Folder Name="/Backend/Entities/">
+    <Project Path="Backend/Entities/IEFI.Entities.csproj" />
+  </Folder>
+</Solution>
