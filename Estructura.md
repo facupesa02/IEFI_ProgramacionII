@@ -22,3 +22,12 @@ Requisitos técnicos obligatorios:
 • Acceso a datos: Entity Framework Core. 
 • Frontend: HTML, CSS y JavaScript vanilla, sin frameworks. 
 • Comunicación: consumo de la API REST desde el frontend. 
+
+Idea del proyecto:
+
+Sistema de gestión de espacios para mascotas
+Para guarderías caninas que necesitan organizar estadías y controlar la capacidad de sus instalaciones.
+Registrar mascotas.
+Registrar espacios.
+Gestionar estadías.
+Lógica: asignar espacios según tamaño y características de cada mascota.

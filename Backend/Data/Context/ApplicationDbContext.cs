@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using IEFI.Entities.Models;
 
 namespace IEFI.Data.Context;
 
@@ -9,8 +10,9 @@ public class ApplicationDbContext : DbContext
     {
     }
 
-    // Agregar aqui los DbSet de las entidades:
-    // public DbSet<Entidad> Entidades => Set<Entidad>();
+    public DbSet<Mascota> Mascotas => Set<Mascota>();
+    public DbSet<Espacio> Espacios => Set<Espacio>();
+    public DbSet<Estadia> Estadias => Set<Estadia>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
