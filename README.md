@@ -1,19 +1,121 @@
 # IEFI_ProgramacionII
 
-Prompts:
+# 🐾 Patitas — Sistema de gestión de estadías para guardería de mascotas
 
-    Facu:       
-        1.Teniendo en cuenta el siguiente archivo necesito que me hagas la estructura del proyecto respetando las reglas establecidas en el mismo, por ahora no tengas en cuenta la parte de frontend.
-        2. En la capa de entities necesito que me crees el model de estadia con los atributos mascota, espacio, fecha de ingreso y de salida con su constructor correspondiente. En la capa data necesito que hagas el dbset y la migracion.
-        3. Necesito que me crees el controller correspondiente para este model, solo la estructura, sin endpoints.
-        4. Necesito que me crees el service y el repository de estadia con las injecciones correspondientes en cada uno, en el program y en su controller.
-        5. necesito armar el frontend dentro de la carpeta frontend de un sistema web de guardería de mascotas siguendo todo lo desarrollado en el backend. Tiene que ser solo HTML, CSS y JavaScript vainilla, sin frameworks ni librerías. Armame una estructura de carpetas simple: un index.html, una carpeta css, y una carpeta js con archivos separados. Quiero un menú de navegación arriba para pasar entre Espacios, Mascotas y Estadías, sin que se recargue la página.
-        armame un archivo js/api.js con funciones genéricas para consumir mi Web API en .NET 8 usando fetch (GET, POST, PUT y DELETE). Dejá la URL base en una constante arriba para que yo la cambie fácil. Y que maneje los errores: si la API devuelve un error, quiero poder mostrarle el mensaje al usuario.
-        Hagamos la pantalla de Espacios. Tiene que listar todos los espacios en una tabla y tener un formulario para crear uno nuevo llamando al post del controller. En cada fila quiero botones para editar y eliminar llamndo a los respectivos endpoints. Al editar, que cargue los datos en el mismo formulario. Antes de eliminar que pida confirmación.
-        Seguí con la pantalla de Mascotas, con la misma lógica que la de Espacios: tabla, formulario, editar y eliminar. Usá el mismo estilo de código así queda todo parejo. Los campos van a ser Los que tiene el model mascota. Ahora lo más importante, la pantalla de Estadías. Tiene que permitir registrar una estadía eligiendo una mascota y un espacio de dos listas desplegables que se cargan desde la API, más fecha de ingreso y fecha de salida. Si la API responde que el espacio ya está ocupado en esas fechas, mostrar ese mensaje de forma clara.
-        Agregá validaciones en todos los formularios antes de mandar nada a la API: campos obligatorios, números mayores a 0 y que la fecha de salida no sea anterior a la de ingreso. Los errores que aparezcan debajo de cada campo, en rojo, no con alert().
-        Ahora dale estilo con CSS. Quiero algo moderno, limpio y simple, con colores suaves, tablas legibles, botones diferenciados para editar y eliminar, y que se vea bien también en el celular. Nada de frameworks como Bootstrap, todo con mi propio CSS.
-        6.Usando de base la entidad mascota, necesito que me crees los dtos que creas necesarios, 
-        el repository de mascota utilizando los dto y el context, el service y el Iservice, y 
-        el controller con el crud basico utilizando linq y try y catch sin funciones de mas.
-        7. Usando la entidad Espacio como base, necesito que me hagas los DTOs que hagan falta, el repository usando los dto y el context, el service y su Iservice. También quiero que me armes el controller con el CRUD básico para poder crear, ver, modificar y eliminar espacios. Usá LINQ y try-catch, y no agregues funciones de más ni cosas que no sean necesarias.
+Trabajo integrador (IEFI) de **Programación II**. Aplicación web para guarderías de mascotas que permite registrar mascotas, administrar los espacios de la guardería y gestionar las estadías, controlando la capacidad de cada espacio.
+
+## Funcionalidades
+
+- **Mascotas:** alta, listado, edición y baja (nombre, especie, raza, edad y peso).
+- **Espacios:** alta, listado, edición y baja (nombre, tipo, tamaño, capacidad y estado de disponibilidad).
+- **Estadías:** registro de una estadía eligiendo una mascota y un espacio, con fecha de ingreso y de salida.
+- **Reglas de negocio al crear una estadía:**
+  - Una mascota no puede tener más de una estadía registrada a la vez.
+  - El espacio debe existir y estar disponible.
+  - El espacio no puede superar su capacidad máxima en las fechas indicadas.
+- **Validaciones en el frontend:** campos obligatorios, números mayores a 0 y fecha de salida no anterior a la de ingreso. Los errores se muestran debajo de cada campo, sin `alert()`.
+- Confirmación antes de eliminar y diseño responsive (se ve bien en el celular).
+
+## Tecnologías
+
+| Capa | Tecnología |
+|------|------------|
+| Backend | Web API en **.NET 8** (C#) |
+| Acceso a datos | **Entity Framework Core 8** (Code First + Migrations) |
+| Base de datos | **SQL Server** |
+| Documentación de la API | Swagger / Swashbuckle |
+| Frontend | **HTML, CSS y JavaScript vanilla** (sin frameworks ni librerías) |
+
+## Arquitectura
+
+El backend sigue una arquitectura de **4 capas**:
+
+```
+IEFI_ProgramacionII/
+├── Backend/
+│   ├── Api/           # Controllers, Program.cs y configuración (appsettings)
+│   ├── Business/      # Lógica de negocio (Services)
+│   ├── Data/          # DbContext, Repositories y Migrations (EF Core)
+│   └── Entities/      # Modelos (Models) y DTOs
+├── Frontend/
+│   ├── index.html
+│   ├── css/styles.css
+│   └── js/            # api.js, form-utils.js, app.js, mascotas.js, espacios.js, estadias.js
+└── IEFI_ProgramacionII.slnx
+```
+
+Flujo de una petición: `Controller (Api)` → `Service (Business)` → `Repository (Data)` → `SQL Server`.
+
+## Requisitos previos
+
+- [.NET SDK 8.0](https://dotnet.microsoft.com/download/dotnet/8.0)
+- SQL Server o SQL Server Express
+- Herramienta de EF Core (para aplicar las migraciones):
+  ```bash
+  dotnet tool install --global dotnet-ef --version 8.0.5
+  ```
+
+## Instalación y ejecución
+
+### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/facupesa02/IEFI_ProgramacionII.git
+cd IEFI_ProgramacionII
+```
+
+### 2. Configurar la cadena de conexión
+
+Editá `Backend/Api/appsettings.json` y ajustá `DefaultConnection` a tu instancia de SQL Server:
+
+```json
+"ConnectionStrings": {
+  "DefaultConnection": "Server=localhost\\SQLEXPRESS;Database=GuarderiaPatitas;Trusted_Connection=True;TrustServerCertificate=True"
+}
+```
+
+### 3. Crear la base de datos (migraciones)
+
+Desde la raíz del repositorio:
+
+```bash
+dotnet ef database update --project Backend/Data --startup-project Backend/Api
+```
+
+### 4. Levantar la API
+
+```bash
+dotnet run --project Backend/Api
+```
+
+La API queda disponible en `http://localhost:5151` y Swagger en `http://localhost:5151/swagger`.
+
+### 5. Abrir el frontend
+
+Servilo con cualquier servidor estático local (por ejemplo la extensión *Live Server* de VS Code, o `python -m http.server` dentro de la carpeta `Frontend`) y abrí `index.html` desde `http://localhost:<puerto>`.
+
+> **Importante:** no lo abras haciendo doble clic en el archivo (`file://`), porque la API solo permite peticiones CORS desde orígenes `localhost` en modo Development.
+
+Si cambiás el puerto de la API, actualizá la constante `API_BASE_URL` al comienzo de `Frontend/js/api.js`.
+
+## Endpoints de la API
+
+| Recurso | Ruta base | Operaciones |
+|---------|-----------|-------------|
+| Mascotas | `/api/Mascotas` | `GET`, `GET /{id}`, `POST`, `PUT /{id}`, `DELETE /{id}` |
+| Espacios | `/Espacio` | `GET`, `GET /{id}`, `POST`, `PUT /{id}`, `DELETE /{id}` |
+| Estadías | `/api/Estadias` | `GET`, `GET /{id}`, `POST`, `PUT /{id}`, `DELETE /{id}` |
+
+Podés probarlos de forma interactiva desde Swagger.
+
+## Modelo de datos
+
+- **Mascota:** `Id`, `Nombre`, `Especie`, `Raza`, `Edad`, `Peso`
+- **Espacio:** `Id`, `Nombre`, `Tipo`, `Tamano`, `Capacidad`, `Estado`
+- **Estadia:** `Id`, `MascotaId`, `EspacioId`, `FechaIngreso`, `FechaSalida`
+
+Relaciones: una estadía pertenece a una mascota y a un espacio; un espacio puede alojar varias estadías mientras no supere su capacidad.
+
+## Autor
+
+[@facupesa02](https://github.com/facupesa02) — Trabajo integrador de Programación II
