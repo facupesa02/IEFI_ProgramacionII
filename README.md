@@ -16,3 +16,4 @@ Prompts:
         6.Usando de base la entidad mascota, necesito que me crees los dtos que creas necesarios, 
         el repository de mascota utilizando los dto y el context, el service y el Iservice, y 
         el controller con el crud basico utilizando linq y try y catch sin funciones de mas.
+        7. Usando la entidad Espacio como base, necesito que me hagas los DTOs que hagan falta, el repository usando los dto y el context, el service y su Iservice. También quiero que me armes el controller con el CRUD básico para poder crear, ver, modificar y eliminar espacios. Usá LINQ y try-catch, y no agregues funciones de más ni cosas que no sean necesarias.
