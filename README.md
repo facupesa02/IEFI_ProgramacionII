@@ -116,6 +116,4 @@ Podés probarlos de forma interactiva desde Swagger.
 
 Relaciones: una estadía pertenece a una mascota y a un espacio; un espacio puede alojar varias estadías mientras no supere su capacidad.
 
-## Autor
-
-[@facupesa02](https://github.com/facupesa02) — Trabajo integrador de Programación II
+Trabajo integrador de Programación II
