@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f7f5">
+    <title>Patitas | Guardería</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script defer src="js/api.js"></script>
+    <script defer src="js/form-utils.js"></script>
+    <script defer src="js/espacios.js"></script>
+    <script defer src="js/mascotas.js"></script>
+    <script defer src="js/estadias.js"></script>
+    <script defer src="js/app.js"></script>
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="#" aria-label="Patitas, inicio">
+            <span class="brand-mark" aria-hidden="true">P</span>
+            <span>patitas<span class="brand-subtitle">guardería</span></span>
+        </a>
+        <nav class="main-nav" aria-label="Navegación principal">
+            <button class="nav-link is-active" type="button" data-view="espacios">Espacios</button>
+            <button class="nav-link" type="button" data-view="mascotas">Mascotas</button>
+            <button class="nav-link" type="button" data-view="estadias">Estadías</button>
+        </nav>
+        <span class="topbar-note">Un lugar para estar bien</span>
+    </header>
+
+    <main class="page-shell">
+        <section class="view is-visible" id="view-espacios" aria-labelledby="espacios-title">
+            <div class="page-heading">
+                <div>
+                    <p class="eyebrow">Administración</p>
+                    <h1 id="espacios-title">Espacios</h1>
+                    <p class="page-description">Gestioná los espacios disponibles en la guardería.</p>
+                </div>
+                <span class="heading-icon" aria-hidden="true">⌂</span>
+            </div>
+            <div class="content-grid">
+                <section class="panel form-panel" aria-labelledby="espacio-form-title">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">Espacios</p>
+                            <h2 id="espacio-form-title">Nuevo espacio</h2>
+                        </div>
+                    </div>
+                    <div class="form-message" id="espacios-message" role="status" aria-live="polite"></div>
+                    <form id="espacio-form" novalidate>
+                        <label class="field">
+                            <span>Nombre</span>
+                            <input name="Nombre" type="text" autocomplete="off" required>
+                            <small class="field-error" data-error-for="Nombre"></small>
+                        </label>
+                        <div class="field-row">
+                            <label class="field">
+                                <span>Tamaño</span>
+                                <input name="Tamano" type="number" min="1" step="1" required>
+                                <small class="field-error" data-error-for="Tamano"></small>
+                            </label>
+                            <label class="field">
+                                <span>Capacidad</span>
+                                <input name="Capacidad" type="number" min="1" step="1" required>
+                                <small class="field-error" data-error-for="Capacidad"></small>
+                            </label>
+                        </div>
+                        <label class="field">
+                            <span>Tipo</span>
+                            <input name="Tipo" type="text" autocomplete="off" required>
+                            <small class="field-error" data-error-for="Tipo"></small>
+                        </label>
+                        <label class="field">
+                            <span>Estado</span>
+                            <select name="Estado" required>
+                                <option value="true">Disponible</option>
+                                <option value="false">No disponible</option>
+                            </select>
+                            <small class="field-error" data-error-for="Estado"></small>
+                        </label>
+                        <div class="form-actions">
+                            <button class="button button-primary" type="submit" id="espacio-submit">Guardar espacio</button>
+                            <button class="button button-quiet" type="button" id="espacio-cancel" hidden>Cancelar</button>
+                        </div>
+                    </form>
+                </section>
+                <section class="panel table-panel" aria-labelledby="espacios-list-title">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">Listado</p>
+                            <h2 id="espacios-list-title">Espacios registrados</h2>
+                        </div>
+                        <button class="button button-quiet button-small" id="espacios-refresh" type="button">Actualizar</button>
+                    </div>
+                    <div class="table-message" id="espacios-table-message" role="status" aria-live="polite"></div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Nombre</th><th>Tipo</th><th>Tamaño</th><th>Capacidad</th><th>Estado</th><th>Acciones</th></tr></thead>
+                            <tbody id="espacios-table-body"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <section class="view" id="view-mascotas" aria-labelledby="mascotas-title" hidden>
+            <div class="page-heading">
+                <div>
+                    <p class="eyebrow">Administración</p>
+                    <h1 id="mascotas-title">Mascotas</h1>
+                    <p class="page-description">Toda la información de tus compañeros de cuatro patas.</p>
+                </div>
+                <span class="heading-icon" aria-hidden="true">♡</span>
+            </div>
+            <div class="content-grid">
+                <section class="panel form-panel" aria-labelledby="mascota-form-title">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">Mascotas</p>
+                            <h2 id="mascota-form-title">Nueva mascota</h2>
+                        </div>
+                    </div>
+                    <div class="form-message" id="mascotas-message" role="status" aria-live="polite"></div>
+                    <form id="mascota-form" novalidate>
+                        <label class="field" data-create-only>
+                            <span>Nombre</span>
+                            <input name="Nombre" type="text" autocomplete="off" required>
+                            <small class="field-error" data-error-for="Nombre"></small>
+                        </label>
+                        <div class="field-row" data-create-only>
+                            <label class="field">
+                                <span>Especie</span>
+                                <input name="Especie" type="text" autocomplete="off" required>
+                                <small class="field-error" data-error-for="Especie"></small>
+                            </label>
+                            <label class="field">
+                                <span>Raza</span>
+                                <input name="Raza" type="text" autocomplete="off" required>
+                                <small class="field-error" data-error-for="Raza"></small>
+                            </label>
+                        </div>
+                        <div class="field-row">
+                            <label class="field">
+                                <span>Edad</span>
+                                <input name="Edad" type="number" min="1" step="1" required>
+                                <small class="field-error" data-error-for="Edad"></small>
+                            </label>
+                            <label class="field">
+                                <span>Peso (kg)</span>
+                                <input name="Peso" type="number" min="0.01" step="0.01" required>
+                                <small class="field-error" data-error-for="Peso"></small>
+                            </label>
+                        </div>
+                        <div class="form-actions">
+                            <button class="button button-primary" type="submit" id="mascota-submit">Guardar mascota</button>
+                            <button class="button button-quiet" type="button" id="mascota-cancel" hidden>Cancelar</button>
+                        </div>
+                    </form>
+                </section>
+                <section class="panel table-panel" aria-labelledby="mascotas-list-title">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">Listado</p>
+                            <h2 id="mascotas-list-title">Mascotas registradas</h2>
+                        </div>
+                        <button class="button button-quiet button-small" id="mascotas-refresh" type="button">Actualizar</button>
+                    </div>
+                    <div class="table-message" id="mascotas-table-message" role="status" aria-live="polite"></div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Nombre</th><th>Especie</th><th>Raza</th><th>Edad</th><th>Peso</th><th>Acciones</th></tr></thead>
+                            <tbody id="mascotas-table-body"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <section class="view" id="view-estadias" aria-labelledby="estadias-title" hidden>
+            <div class="page-heading">
+                <div>
+                    <p class="eyebrow">Organización</p>
+                    <h1 id="estadias-title">Estadías</h1>
+                    <p class="page-description">Reservá un espacio para una mascota y consultá sus estadías.</p>
+                </div>
+                <span class="heading-icon" aria-hidden="true">✳</span>
+            </div>
+            <div class="stay-grid">
+                <section class="panel form-panel stay-form-panel" aria-labelledby="estadia-form-title">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">Nueva reserva</p>
+                            <h2 id="estadia-form-title">Registrar estadía</h2>
+                        </div>
+                    </div>
+                    <div class="form-message" id="estadias-message" role="status" aria-live="polite"></div>
+                    <form id="estadia-form" novalidate>
+                        <label class="field">
+                            <span>Mascota</span>
+                            <select name="MascotaId" required>
+                                <option value="">Elegí una mascota</option>
+                            </select>
+                            <small class="field-error" data-error-for="MascotaId"></small>
+                        </label>
+                        <label class="field">
+                            <span>Espacio</span>
+                            <select name="EspacioId" required>
+                                <option value="">Elegí un espacio</option>
+                            </select>
+                            <small class="field-error" data-error-for="EspacioId"></small>
+                        </label>
+                        <div class="field-row">
+                            <label class="field">
+                                <span>Fecha de ingreso</span>
+                                <input name="FechaIngreso" type="date" required>
+                                <small class="field-error" data-error-for="FechaIngreso"></small>
+                            </label>
+                            <label class="field">
+                                <span>Fecha de salida</span>
+                                <input name="FechaSalida" type="date" required>
+                                <small class="field-error" data-error-for="FechaSalida"></small>
+                            </label>
+                        </div>
+                        <div class="form-actions">
+                            <button class="button button-primary" type="submit">Registrar estadía</button>
+                        </div>
+                    </form>
+                </section>
+                <section class="panel table-panel" aria-labelledby="estadias-list-title">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">Agenda</p>
+                            <h2 id="estadias-list-title">Estadías registradas</h2>
+                        </div>
+                        <button class="button button-quiet button-small" id="estadias-refresh" type="button">Actualizar</button>
+                    </div>
+                    <div class="table-message" id="estadias-table-message" role="status" aria-live="polite"></div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Mascota</th><th>Espacio</th><th>Ingreso</th><th>Salida</th><th>Acciones</th></tr></thead>
+                            <tbody id="estadias-table-body"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+    <div class="modal-backdrop" id="confirm-modal" hidden>
+        <section class="confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-message" tabindex="-1">
+            <span class="confirm-icon" aria-hidden="true">!</span>
+            <p class="eyebrow">Confirmación</p>
+            <h2 id="confirm-title">¿Eliminar elemento?</h2>
+            <p class="confirm-message" id="confirm-message"></p>
+            <div class="confirm-actions">
+                <button class="button button-quiet" id="confirm-cancel" type="button">Cancelar</button>
+                <button class="button button-delete" id="confirm-accept" type="button">Sí, eliminar</button>
+            </div>
+        </section>
+    </div>
+    <footer class="footer">Patitas <span aria-hidden="true">·</span> Cuidado con cariño</footer>
+</body>
+</html>

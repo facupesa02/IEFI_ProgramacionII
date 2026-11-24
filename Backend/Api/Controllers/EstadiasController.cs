@@ -85,6 +85,14 @@ public class EstadiasController : ControllerBase
 
         try
         {
+            var errorCreacion = await _estadiaService.ValidarCreacionAsync(
+                solicitud,
+                cancellationToken);
+            if (errorCreacion is not null)
+            {
+                return BadRequest(new { mensaje = errorCreacion });
+            }
+
             var estadia = await _estadiaService.AgregarAsync(solicitud, cancellationToken);
             return CreatedAtAction(
                 nameof(ObtenerPorId),

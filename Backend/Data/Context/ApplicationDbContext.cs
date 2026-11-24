@@ -1,7 +1,5 @@
+using IEFI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
-using IEFI.Entities.Models;
-using IEFI.Entities.Models;
-
 namespace IEFI.Data.Context;
 
 public class ApplicationDbContext : DbContext

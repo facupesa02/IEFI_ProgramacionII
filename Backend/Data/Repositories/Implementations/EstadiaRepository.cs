@@ -32,6 +32,25 @@ public class EstadiaRepository : IEstadiaRepository
             .FirstOrDefaultAsync(estadia => estadia.Id == id, cancellationToken);
     }
 
+    public Task<bool?> ObtenerDisponibilidadEspacioAsync(
+        int id,
+        CancellationToken cancellationToken = default)
+    {
+        return _context.Espacios
+            .Where(espacio => espacio.Id == id)
+            .Select(espacio => (bool?)espacio.Estado)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public Task<bool> ExisteEstadiaParaMascotaAsync(
+        int mascotaId,
+        CancellationToken cancellationToken = default)
+    {
+        return _context.Estadias.AnyAsync(
+            estadia => estadia.MascotaId == mascotaId,
+            cancellationToken);
+    }
+
     public Task<bool> ExisteMascotaAsync(int id, CancellationToken cancellationToken = default)
     {
         return _context.Mascotas.AnyAsync(mascota => mascota.Id == id, cancellationToken);

@@ -29,6 +29,42 @@ public class EstadiaService : IEstadiaService
         return estadia is null ? null : MapearRespuesta(estadia);
     }
 
+    public async Task<string?> ValidarCreacionAsync(
+        EstadiaRequestDto solicitud,
+        CancellationToken cancellationToken = default)
+    {
+        if (solicitud.FechaIngreso.Date < DateTime.Today)
+        {
+            return "La fecha de ingreso no puede ser anterior a la fecha actual.";
+        }
+
+        if (solicitud.FechaSalida.Date < solicitud.FechaIngreso.Date)
+        {
+            return "La fecha de salida no puede ser anterior a la fecha de ingreso.";
+        }
+
+        var mascotaYaTieneEstadia = await _estadiaRepository.ExisteEstadiaParaMascotaAsync(
+            solicitud.MascotaId,
+            cancellationToken);
+        if (mascotaYaTieneEstadia)
+        {
+            return "La mascota ya tiene una estadía registrada. Finalizá esa estadía antes de crear otra.";
+        }
+
+        var espacioDisponible = await _estadiaRepository.ObtenerDisponibilidadEspacioAsync(
+            solicitud.EspacioId,
+            cancellationToken);
+
+        if (espacioDisponible is null)
+        {
+            return "El espacio seleccionado no existe.";
+        }
+
+        return espacioDisponible.Value
+            ? null
+            : "El espacio seleccionado no está disponible.";
+    }
+
     public async Task<EstadiaResponseDto> AgregarAsync(
         EstadiaRequestDto solicitud,
         CancellationToken cancellationToken = default)
