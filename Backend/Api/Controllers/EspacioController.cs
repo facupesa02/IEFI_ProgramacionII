@@ -1,4 +1,4 @@
-using IEFI.Business.Interfaces;
+using IEFI.Business.Services;
 using IEFI.Entities.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,10 +8,10 @@ namespace IEFI.Api.Controllers;
 [Route("[controller]")]
 public class EspacioController : ControllerBase
 {
-    private readonly IEspacioService _service;
+    private readonly EspacioService _service;
     private readonly ILogger<EspacioController> _logger;
 
-    public EspacioController(IEspacioService service, ILogger<EspacioController> logger)
+    public EspacioController(EspacioService service, ILogger<EspacioController> logger)
     {
         _service = service;
         _logger = logger;

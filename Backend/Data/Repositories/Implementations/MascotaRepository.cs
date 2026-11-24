@@ -1,11 +1,10 @@
 using IEFI.Data.Context;
-using IEFI.Data.Repositories.Interfaces;
 using IEFI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace IEFI.Data.Repositories.Implementations;
 
-public class MascotaRepository : IMascotaRepository
+public class MascotaRepository
 {
     private readonly ApplicationDbContext _context;
 

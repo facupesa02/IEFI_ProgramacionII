@@ -1,14 +1,13 @@
-using IEFI.Business.Interfaces;
-using IEFI.Data.Repositories.Interfaces;
+using IEFI.Data.Repositories.Implementations;
 using IEFI.Entities.DTOs;
 
 namespace IEFI.Business.Services;
 
-public class EspacioService : IEspacioService
+public class EspacioService
 {
-    private readonly IEspacioRepository _repository;
+    private readonly EspacioRepository _repository;
 
-    public EspacioService(IEspacioRepository repository)
+    public EspacioService(EspacioRepository repository)
     {
         _repository = repository;
     }

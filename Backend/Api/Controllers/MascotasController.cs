@@ -1,4 +1,4 @@
-using IEFI.Business.Interfaces;
+using IEFI.Business.Services;
 using IEFI.Entities.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,10 +8,10 @@ namespace IEFI.Api.Controllers;
 [Route("api/[controller]")]
 public class MascotasController : ControllerBase
 {
-    private readonly IMascotaService _service;
+    private readonly MascotaService _service;
     private readonly ILogger<MascotasController> _logger;
 
-    public MascotasController(IMascotaService service, ILogger<MascotasController> logger)
+    public MascotasController(MascotaService service, ILogger<MascotasController> logger)
     {
         _service = service;
         _logger = logger;

@@ -1,15 +1,14 @@
-using IEFI.Business.Interfaces;
-using IEFI.Data.Repositories.Interfaces;
+using IEFI.Data.Repositories.Implementations;
 using IEFI.Entities.DTOs;
 using IEFI.Entities.Models;
 
 namespace IEFI.Business.Services;
 
-public class MascotaService : IMascotaService
+public class MascotaService
 {
-    private readonly IMascotaRepository _repository;
+    private readonly MascotaRepository _repository;
 
-    public MascotaService(IMascotaRepository repository)
+    public MascotaService(MascotaRepository repository)
     {
         _repository = repository;
     }

@@ -1,92 +1,79 @@
 using IEFI.Entities.DTOs;
-using IEFI.Business.Interfaces;
-using IEFI.Data.Repositories.Interfaces;
+using IEFI.Data.Repositories.Implementations;
 using IEFI.Entities.Models;
 
 namespace IEFI.Business.Services;
 
-public class EstadiaService : IEstadiaService
+public class EstadiaService
 {
-    private readonly IEstadiaRepository _estadiaRepository;
+    private readonly EstadiaRepository _estadiaRepository;
 
-    public EstadiaService(IEstadiaRepository estadiaRepository)
+    public EstadiaService(EstadiaRepository estadiaRepository)
     {
         _estadiaRepository = estadiaRepository;
     }
 
-    public async Task<List<EstadiaResponseDto>> ObtenerTodasAsync(
-        CancellationToken cancellationToken = default)
+    public async Task<List<EstadiaResponseDto>> ObtenerTodasAsync()
     {
-        var estadias = await _estadiaRepository.ObtenerTodasAsync(cancellationToken);
+        var estadias = await _estadiaRepository.ObtenerTodasAsync();
         return estadias.Select(MapearRespuesta).ToList();
     }
 
-    public async Task<EstadiaResponseDto?> ObtenerPorIdAsync(
-        int id,
-        CancellationToken cancellationToken = default)
+    public async Task<EstadiaResponseDto?> ObtenerPorIdAsync(int id)
     {
-        var estadia = await _estadiaRepository.ObtenerPorIdAsync(id, cancellationToken);
+        var estadia = await _estadiaRepository.ObtenerPorIdAsync(id);
         return estadia is null ? null : MapearRespuesta(estadia);
     }
 
-    public async Task<string?> ValidarCreacionAsync(
-        EstadiaRequestDto solicitud,
-        CancellationToken cancellationToken = default)
+    public async Task<string?> ValidarCreacionAsync(EstadiaRequestDto solicitud)
     {
-        if (solicitud.FechaIngreso.Date < DateTime.Today)
-        {
-            return "La fecha de ingreso no puede ser anterior a la fecha actual.";
-        }
-
-        if (solicitud.FechaSalida.Date < solicitud.FechaIngreso.Date)
-        {
-            return "La fecha de salida no puede ser anterior a la fecha de ingreso.";
-        }
-
         var mascotaYaTieneEstadia = await _estadiaRepository.ExisteEstadiaParaMascotaAsync(
-            solicitud.MascotaId,
-            cancellationToken);
+            solicitud.MascotaId);
         if (mascotaYaTieneEstadia)
         {
             return "La mascota ya tiene una estadía registrada. Finalizá esa estadía antes de crear otra.";
         }
 
-        var espacioDisponible = await _estadiaRepository.ObtenerDisponibilidadEspacioAsync(
-            solicitud.EspacioId,
-            cancellationToken);
-
-        if (espacioDisponible is null)
+        var espacio = await _estadiaRepository.ObtenerEspacioAsync(solicitud.EspacioId);
+        if (espacio is null)
         {
             return "El espacio seleccionado no existe.";
         }
 
-        return espacioDisponible.Value
-            ? null
-            : "El espacio seleccionado no está disponible.";
+        if (!espacio.Estado)
+        {
+            return "El espacio seleccionado no está disponible.";
+        }
+
+        var cantidadEstadias = await _estadiaRepository.ObtenerCantidadEstadiasEnEspacioAsync(
+            solicitud.EspacioId,
+            solicitud.FechaIngreso,
+            solicitud.FechaSalida);
+        if (cantidadEstadias >= espacio.Capacidad)
+        {
+            return "El espacio seleccionado ya alcanzó su capacidad máxima para las fechas indicadas.";
+        }
+
+        return null;
     }
 
-    public async Task<EstadiaResponseDto> AgregarAsync(
-        EstadiaRequestDto solicitud,
-        CancellationToken cancellationToken = default)
+    public async Task<EstadiaResponseDto> AgregarAsync(EstadiaRequestDto solicitud)
     {
         var estadia = MapearEntidad(solicitud);
-        await _estadiaRepository.AgregarAsync(estadia, cancellationToken);
+        await _estadiaRepository.AgregarAsync(estadia);
         return MapearRespuesta(estadia);
     }
 
-    public Task<bool> ActualizarAsync(
-        int id,
-        EstadiaRequestDto solicitud,
-        CancellationToken cancellationToken = default)
+    public Task<bool> ActualizarAsync(int id, EstadiaRequestDto solicitud)
     {
         var estadia = MapearEntidad(solicitud);
         estadia.Id = id;
-        return _estadiaRepository.ActualizarAsync(estadia, cancellationToken);
+        return _estadiaRepository.ActualizarAsync(estadia);
     }
 
-    public Task<bool> EliminarAsync(int id, CancellationToken cancellationToken = default)
+    public Task<bool> EliminarAsync(int id)
     {
-        return _estadiaRepository.EliminarAsync(id, cancellationToken);
+        return _estadiaRepository.EliminarAsync(id);
     }
 
     private static Estadia MapearEntidad(EstadiaRequestDto solicitud)

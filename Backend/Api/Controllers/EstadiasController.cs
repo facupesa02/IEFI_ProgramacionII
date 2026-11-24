@@ -1,6 +1,6 @@
 using System.Data.Common;
 using IEFI.Entities.DTOs;
-using IEFI.Business.Interfaces;
+using IEFI.Business.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -11,11 +11,11 @@ namespace IEFI.Api.Controllers;
 [Route("api/[controller]")]
 public class EstadiasController : ControllerBase
 {
-    private readonly IEstadiaService _estadiaService;
+    private readonly EstadiaService _estadiaService;
     private readonly ILogger<EstadiasController> _logger;
 
     public EstadiasController(
-        IEstadiaService estadiaService,
+        EstadiaService estadiaService,
         ILogger<EstadiasController> logger)
     {
         _estadiaService = estadiaService;
@@ -23,12 +23,11 @@ public class EstadiasController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<EstadiaResponseDto>>> ObtenerTodas(
-        CancellationToken cancellationToken)
+    public async Task<ActionResult<List<EstadiaResponseDto>>> ObtenerTodas()
     {
         try
         {
-            var estadias = await _estadiaService.ObtenerTodasAsync(cancellationToken);
+            var estadias = await _estadiaService.ObtenerTodasAsync();
             return Ok(estadias);
         }
         catch (DbException exception)
@@ -41,9 +40,7 @@ public class EstadiasController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<EstadiaResponseDto>> ObtenerPorId(
-        string id,
-        CancellationToken cancellationToken)
+    public async Task<ActionResult<EstadiaResponseDto>> ObtenerPorId(string id)
     {
         if (!TryParseId(id, out var estadiaId))
         {
@@ -55,7 +52,7 @@ public class EstadiasController : ControllerBase
 
         try
         {
-            var estadia = await _estadiaService.ObtenerPorIdAsync(estadiaId, cancellationToken);
+            var estadia = await _estadiaService.ObtenerPorIdAsync(estadiaId);
             if (estadia is null)
             {
                 return NotFound(new { mensaje = $"No existe una estadia con id {estadiaId}." });
@@ -74,8 +71,7 @@ public class EstadiasController : ControllerBase
 
     [HttpPost]
     public async Task<ActionResult<EstadiaResponseDto>> Crear(
-        [FromBody] EstadiaRequestDto solicitud,
-        CancellationToken cancellationToken)
+        [FromBody] EstadiaRequestDto solicitud)
     {
         var errorValidacion = ValidarSolicitud(solicitud);
         if (errorValidacion is not null)
@@ -85,15 +81,13 @@ public class EstadiasController : ControllerBase
 
         try
         {
-            var errorCreacion = await _estadiaService.ValidarCreacionAsync(
-                solicitud,
-                cancellationToken);
+            var errorCreacion = await _estadiaService.ValidarCreacionAsync(solicitud);
             if (errorCreacion is not null)
             {
                 return BadRequest(new { mensaje = errorCreacion });
             }
 
-            var estadia = await _estadiaService.AgregarAsync(solicitud, cancellationToken);
+            var estadia = await _estadiaService.AgregarAsync(solicitud);
             return CreatedAtAction(
                 nameof(ObtenerPorId),
                 new { id = estadia.Id },
@@ -118,8 +112,7 @@ public class EstadiasController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Actualizar(
         string id,
-        [FromBody] EstadiaRequestDto solicitud,
-        CancellationToken cancellationToken)
+        [FromBody] EstadiaRequestDto solicitud)
     {
         if (!TryParseId(id, out var estadiaId))
         {
@@ -137,10 +130,7 @@ public class EstadiasController : ControllerBase
 
         try
         {
-            var actualizado = await _estadiaService.ActualizarAsync(
-                estadiaId,
-                solicitud,
-                cancellationToken);
+            var actualizado = await _estadiaService.ActualizarAsync(estadiaId, solicitud);
 
             if (!actualizado)
             {
@@ -166,9 +156,7 @@ public class EstadiasController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Eliminar(
-        string id,
-        CancellationToken cancellationToken)
+    public async Task<IActionResult> Eliminar(string id)
     {
         if (!TryParseId(id, out var estadiaId))
         {
@@ -180,7 +168,7 @@ public class EstadiasController : ControllerBase
 
         try
         {
-            var eliminado = await _estadiaService.EliminarAsync(estadiaId, cancellationToken);
+            var eliminado = await _estadiaService.EliminarAsync(estadiaId);
             if (!eliminado)
             {
                 return NotFound(new { mensaje = $"No existe una estadia con id {estadiaId}." });
@@ -219,6 +207,16 @@ public class EstadiasController : ControllerBase
         if (solicitud.EspacioId <= 0)
         {
             return "El id del espacio debe ser mayor que cero.";
+        }
+
+        if (solicitud.FechaIngreso.Date < DateTime.Today)
+        {
+            return "La fecha de ingreso no puede ser anterior a la fecha actual.";
+        }
+
+        if (solicitud.FechaSalida.Date < solicitud.FechaIngreso.Date)
+        {
+            return "La fecha de salida no puede ser anterior a la fecha de ingreso.";
         }
 
         return null;

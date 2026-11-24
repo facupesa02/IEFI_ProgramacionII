@@ -1,12 +1,11 @@
 using IEFI.Data.Context;
-using IEFI.Data.Repositories.Interfaces;
 using IEFI.Entities.DTOs;
 using IEFI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace IEFI.Data.Repositories.Implementations;
 
-public class EspacioRepository : IEspacioRepository
+public class EspacioRepository
 {
     private readonly ApplicationDbContext _context;
 

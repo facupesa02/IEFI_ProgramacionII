@@ -1,11 +1,10 @@
 using IEFI.Data.Context;
-using IEFI.Data.Repositories.Interfaces;
 using IEFI.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace IEFI.Data.Repositories.Implementations;
 
-public class EstadiaRepository : IEstadiaRepository
+public class EstadiaRepository
 {
     private readonly ApplicationDbContext _context;
 
@@ -14,64 +13,66 @@ public class EstadiaRepository : IEstadiaRepository
         _context = context;
     }
 
-    public async Task<List<Estadia>> ObtenerTodasAsync(CancellationToken cancellationToken = default)
+    public async Task<List<Estadia>> ObtenerTodasAsync()
     {
         return await _context.Estadias
             .AsNoTracking()
             .Include(estadia => estadia.Mascota)
             .Include(estadia => estadia.Espacio)
-            .ToListAsync(cancellationToken);
+            .ToListAsync();
     }
 
-    public async Task<Estadia?> ObtenerPorIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<Estadia?> ObtenerPorIdAsync(int id)
     {
         return await _context.Estadias
             .AsNoTracking()
             .Include(estadia => estadia.Mascota)
             .Include(estadia => estadia.Espacio)
-            .FirstOrDefaultAsync(estadia => estadia.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(estadia => estadia.Id == id);
     }
 
-    public Task<bool?> ObtenerDisponibilidadEspacioAsync(
-        int id,
-        CancellationToken cancellationToken = default)
+    public Task<Espacio?> ObtenerEspacioAsync(int id)
     {
         return _context.Espacios
-            .Where(espacio => espacio.Id == id)
-            .Select(espacio => (bool?)espacio.Estado)
-            .FirstOrDefaultAsync(cancellationToken);
+            .FirstOrDefaultAsync(espacio => espacio.Id == id);
     }
 
-    public Task<bool> ExisteEstadiaParaMascotaAsync(
-        int mascotaId,
-        CancellationToken cancellationToken = default)
+    public Task<int> ObtenerCantidadEstadiasEnEspacioAsync(
+        int espacioId,
+        DateTime fechaIngreso,
+        DateTime fechaSalida)
+    {
+        return _context.Estadias.CountAsync(estadia =>
+            estadia.EspacioId == espacioId &&
+            estadia.FechaIngreso.Date <= fechaSalida.Date &&
+            estadia.FechaSalida.Date >= fechaIngreso.Date);
+    }
+
+    public Task<bool> ExisteEstadiaParaMascotaAsync(int mascotaId)
     {
         return _context.Estadias.AnyAsync(
-            estadia => estadia.MascotaId == mascotaId,
-            cancellationToken);
+            estadia => estadia.MascotaId == mascotaId);
     }
 
-    public Task<bool> ExisteMascotaAsync(int id, CancellationToken cancellationToken = default)
+    public Task<bool> ExisteMascotaAsync(int id)
     {
-        return _context.Mascotas.AnyAsync(mascota => mascota.Id == id, cancellationToken);
+        return _context.Mascotas.AnyAsync(mascota => mascota.Id == id);
     }
 
-    public Task<bool> ExisteEspacioAsync(int id, CancellationToken cancellationToken = default)
+    public Task<bool> ExisteEspacioAsync(int id)
     {
-        return _context.Espacios.AnyAsync(espacio => espacio.Id == id, cancellationToken);
+        return _context.Espacios.AnyAsync(espacio => espacio.Id == id);
     }
 
-    public async Task AgregarAsync(Estadia estadia, CancellationToken cancellationToken = default)
+    public async Task AgregarAsync(Estadia estadia)
     {
-        await _context.Estadias.AddAsync(estadia, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.Estadias.AddAsync(estadia);
+        await _context.SaveChangesAsync();
     }
 
-    public async Task<bool> ActualizarAsync(Estadia estadia, CancellationToken cancellationToken = default)
+    public async Task<bool> ActualizarAsync(Estadia estadia)
     {
-        var estadiaExistente = await _context.Estadias.FindAsync(
-            new object[] { estadia.Id },
-            cancellationToken);
+        var estadiaExistente = await _context.Estadias.FindAsync(new object[] { estadia.Id });
 
         if (estadiaExistente is null)
         {
@@ -83,13 +84,13 @@ public class EstadiaRepository : IEstadiaRepository
         estadiaExistente.FechaIngreso = estadia.FechaIngreso;
         estadiaExistente.FechaSalida = estadia.FechaSalida;
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync();
         return true;
     }
 
-    public async Task<bool> EliminarAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<bool> EliminarAsync(int id)
     {
-        var estadia = await _context.Estadias.FindAsync(new object[] { id }, cancellationToken);
+        var estadia = await _context.Estadias.FindAsync(new object[] { id });
 
         if (estadia is null)
         {
@@ -97,7 +98,7 @@ public class EstadiaRepository : IEstadiaRepository
         }
 
         _context.Estadias.Remove(estadia);
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync();
         return true;
     }
 }
